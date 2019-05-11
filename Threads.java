@@ -1,9 +1,8 @@
-public class CreatingThreads {
+public class Threads {
     public static class MyThread extends Thread {
         @Override
         public void run() {
             //do whatever
-            System.out.println
         }
     }
 
@@ -11,6 +10,8 @@ public class CreatingThreads {
         Thread myThread = new Thread();
 
         myThread.start();
+
+        System.out.println("Test");
 
     }
 }
