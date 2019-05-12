@@ -19,11 +19,11 @@ public class Server {
     }
 
     private static class UDPThread extends Thread {
-        DatagramSocket UDPSocket;
+        DatagramSocket udpSocket;
         private byte[] buf = new byte[256];
 
         public UDPThread(DatagramSocket socket) {
-            this.UDPSocket = socket;
+            this.udpSocket = socket;
         }
 
         @Override
