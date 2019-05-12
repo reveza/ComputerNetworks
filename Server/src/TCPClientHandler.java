@@ -15,7 +15,7 @@ public class TCPClientHandler extends ClientHandler {
     // code logique de gestion de requetes du client
     @Override
     public void run(){
-        while (true) {
+        while (!connectionSocket.isClosed()) {
             manageRequest();
         }
     }
