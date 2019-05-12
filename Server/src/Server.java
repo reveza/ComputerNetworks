@@ -74,7 +74,7 @@ public class Server {
         }
     }
 
-    public static void connectUDP() {
+    private static void initUDP() {
         try(DatagramSocket UDPSocket = new DatagramSocket(5001)) {
             UDPThread udp = new UDPThread(UDPSocket);
         } catch (SocketException e) {
