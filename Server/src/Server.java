@@ -50,10 +50,11 @@ public class Server {
 
         @Override
         public void run() {
-            while(true) {
-                try(Socket connectionSocket = this.TCPSocket.accept()) {
-                    ClientHandler TCPClientHandler = new TCPClientHandler(connectionSocket);
-                    TCPClientHandler.start();
+            while (true) {
+                try {
+                    Socket connectionSocket = this.tcpSocket.accept();
+                    ClientHandler tcpClientHandler = new TCPClientHandler(connectionSocket);
+                    tcpClientHandler.start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
