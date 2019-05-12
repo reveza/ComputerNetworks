@@ -1,12 +1,5 @@
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.io.*;
-import java.sql.Timestamp;
-import java.net.InetAddress;
-import java.net.DatagramSocket;
-import java.net.DatagramPacket;
 
 public class Server {
 
@@ -14,7 +7,6 @@ public class Server {
     static final int TCP_PORT = 5002;
 
     public static void main(String[] args) {
-        System.out.println("TEST");
         initServer();
     }
 
