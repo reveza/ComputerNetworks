@@ -75,8 +75,10 @@ public class Server {
     }
 
     private static void initUDP() {
-        try(DatagramSocket UDPSocket = new DatagramSocket(5001)) {
-            UDPThread udp = new UDPThread(UDPSocket);
+        try {
+            DatagramSocket udpSocket = new DatagramSocket(UDP_PORT);
+            Thread udpThread = new UDPThread(udpSocket);
+            udpThread.start();
         } catch (SocketException e) {
             e.printStackTrace();
         }
