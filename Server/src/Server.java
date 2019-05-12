@@ -20,7 +20,7 @@ public class Server {
 
         @Override
         public void run() {
-            while(true) {
+            while (true) {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 try {
                     this.udpSocket.receive(packet);
@@ -32,6 +32,7 @@ public class Server {
             }
         }
     }
+
     private static class TCPThread extends Thread {
         ServerSocket tcpSocket;
 
@@ -49,7 +50,7 @@ public class Server {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                
+
             }
         }
     }
@@ -84,6 +85,5 @@ public class Server {
     private static void getUserPorts() {
         // TODO change ports variables depending on user input
     }
-
 
 }

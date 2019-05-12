@@ -24,7 +24,7 @@ public class TCPClientHandler extends ClientHandler {
     protected String readData() {
         // TODO read from tcp
         return "";
-    } 
+    }
 
     @Override
     protected void writeData(String message) {
