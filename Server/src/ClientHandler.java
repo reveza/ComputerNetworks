@@ -11,10 +11,10 @@ public abstract class ClientHandler extends Thread {
         String clientMessage = readData();
             switch (clientMessage) {
                 case LIST_REQUEST :
-                    writeData();
+                    writeData("");
                     break;
                 case DOWNLOAD_REQUEST:
-                    writeData();
+                    writeData("");
                     break;
             }
     }
