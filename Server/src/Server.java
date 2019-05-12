@@ -15,7 +15,7 @@ public class Server {
 
     public static void main(String[] args) {
         System.out.println("TEST");
-        connectToServer();
+        initServer();
     }
 
     private static class UDPThread extends Thread {
