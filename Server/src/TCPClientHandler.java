@@ -3,8 +3,8 @@ import java.io.*;
 
 public class TCPClientHandler extends ClientHandler {
     private Socket connectionSocket;
-    protected ObjectInputStream inputStream;
-    protected ObjectOutputStream outputStream;
+    private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
 
     TCPClientHandler(Socket connectionSocket) throws IOException {
         this.connectionSocket = connectionSocket;
