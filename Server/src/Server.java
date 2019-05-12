@@ -22,7 +22,7 @@ public class Server {
         DatagramSocket udpSocket;
         private byte[] buf = new byte[256];
 
-        public UDPThread(DatagramSocket socket) {
+        UDPThread(DatagramSocket socket) {
             this.udpSocket = socket;
         }
 
