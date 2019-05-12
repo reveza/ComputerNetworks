@@ -9,6 +9,10 @@ import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 
 public class Server {
+
+    static final int UDP_PORT = 5001;
+    static final int TCP_PORT = 5002;
+
     public static void main(String[] args) {
         System.out.println("TEST");
         connectToServer();
