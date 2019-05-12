@@ -2,10 +2,10 @@ import java.io.*;
 import java.net.DatagramPacket;
 
 public class UDPClientHandler extends ClientHandler {
-    private DatagramPacket connectionSocket;
+    private DatagramPacket messagePackets;
 
-    UDPClientHandler(DatagramPacket connectionSocket) {
-        this.connectionSocket = connectionSocket;
+    UDPClientHandler(DatagramPacket messagePackets) {
+        this.messagePackets = messagePackets;
     }
 
     @Override
