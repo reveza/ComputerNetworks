@@ -18,7 +18,7 @@ public class Server {
         connectToServer();
     }
 
-    class UDPThread extends Thread {
+    private static class UDPThread extends Thread {
         DatagramSocket UDPSocket;
         private byte[] buf = new byte[256];
 
@@ -41,7 +41,7 @@ public class Server {
             }
         }
     }
-    class TCPThread extends Thread {
+    private static class TCPThread extends Thread {
         ServerSocket TCPSocket;
 
         public TCPThread(ServerSocket socket) {
