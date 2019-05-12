@@ -6,7 +6,7 @@ public abstract class ClientHandler extends Thread {
     private final String LIST_REQUEST = "ls";
     private final String DOWNLOAD_REQUEST = "";
 
-    public void manageRequest() {
+    protected void manageRequest() {
         String clientMessage = readData();
         displayCommand(clientMessage);
             switch (clientMessage) {
