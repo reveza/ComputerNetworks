@@ -34,10 +34,6 @@ public class Server {
                     ClientHandler UDPClientHandler = new UDPClientHandler(connectionSocket);
                     UDPClientHandler.start();
                 }
-
-                InetAddress address = packet.getAddress();
-                int port = packet.getPort();
-                packet = new DatagramPacket(buf, buf.length, address, port);
             }
         }
     }
