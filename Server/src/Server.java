@@ -64,11 +64,10 @@ public class Server {
 
     private static void initTCP() {
         //Try to connect the server on an unused port. Successful connection will return a socket
-        try(ServerSocket TCPSocket = new ServerSocket(5001)) {
-            TCPThread tcp = new TCPThread(TCPSocket);
-            tcp.start();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        try {
+            ServerSocket tcpSocket = new ServerSocket(TCP_PORT);
+            Thread tcpThread = new TCPThread(tcpSocket);
+            tcpThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
