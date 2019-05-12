@@ -44,7 +44,7 @@ public class Server {
     private static class TCPThread extends Thread {
         ServerSocket tcpSocket;
 
-        public TCPThread(ServerSocket socket) {
+        TCPThread(ServerSocket socket) {
             this.tcpSocket = socket;
         }
 
