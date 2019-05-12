@@ -7,8 +7,8 @@ public abstract class ClientHandler extends Thread {
     private final String DOWNLOAD_REQUEST = "";
 
     public void manageRequest() {
-        // TODO complete display of requests, with timestamp
         String clientMessage = readData();
+        displayCommand(clientMessage);
             switch (clientMessage) {
                 case LIST_REQUEST :
                     writeData("");
@@ -17,6 +17,19 @@ public abstract class ClientHandler extends Thread {
                     writeData("");
                     break;
             }
+    }
+
+    private void displayCommand(String command) {
+        try {
+            InetAddress ip = InetAddress.getLocalHost();
+            Integer port = this instanceof TCPClientHandler ? Server.TCP_PORT : Server.UDP_PORT;
+            Timestamp time = new Timestamp(System.currentTimeMillis());
+
+            Message msg = new Message(ip, port, time, command);
+            msg.display();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     protected abstract String readData();

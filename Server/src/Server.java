@@ -82,11 +82,5 @@ public class Server {
 
     }
 
-    InetAddress ip = InetAddress.getLocalHost();
-    Integer port = 5002;
-    Timestamp time = new Timestamp(System.currentTimeMillis());
-    String command = "ls";
-
-    Message msg = new Message(ip, port, time, command);
 
 }
