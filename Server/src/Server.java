@@ -82,7 +82,7 @@ public class Server {
         }
     }
 
-    public static void connectToServer() {
+    private static void initServer() {
 
     }
 
