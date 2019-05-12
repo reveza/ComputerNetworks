@@ -83,6 +83,9 @@ public class Server {
     }
 
     private static void initServer() {
+        getUserPorts();
+        initTCP();
+        initUDP();
     }
 
     private static void getUserPorts() {
