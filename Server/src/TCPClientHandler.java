@@ -13,19 +13,25 @@ public class TCPClientHandler extends ClientHandler {
     }
 
     // code logique de gestion de requetes du client
+    @Override
     public void run(){
         while (true) {
             manageRequest();
         }
     }
 
+    @Override
     protected String readData() {
         // TODO read from tcp
         return "";
     } 
+
+    @Override
     protected void writeData(String message) {
         // TODO write file to tcp
     }
+
+    @Override
     protected void writeData(File file) {
         // TODO write file to tcp
     }

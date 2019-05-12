@@ -22,6 +22,7 @@ public class Server {
             this.UDPSocket = socket;
         }
 
+        @Override
         public void run() {
             while(true) {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
@@ -43,6 +44,7 @@ public class Server {
             this.TCPSocket = socket;
         }
 
+        @Override
         public void run() {
             while(true) {
                 try(Socket connectionSocket = this.TCPSocket.accept()) {
