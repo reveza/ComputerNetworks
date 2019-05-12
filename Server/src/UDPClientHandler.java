@@ -4,7 +4,7 @@ import java.net.DatagramPacket;
 public class UDPClientHandler extends ClientHandler {
     private DatagramPacket connectionSocket;
 
-    UDPClientHandler(DatagramPacket connectionSocket) throws IOException {
+    UDPClientHandler(DatagramPacket connectionSocket) {
         this.connectionSocket = connectionSocket;
     }
 
