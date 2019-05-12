@@ -30,9 +30,12 @@ public class Server {
         public void run() {
             while(true) {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
-                try (Socket connectionSocket = this.UDPSocket.receive(packet)) {
-                    ClientHandler UDPClientHandler = new UDPClientHandler(connectionSocket);
-                    UDPClientHandler.start();
+                try {
+                    this.udpSocket.receive(packet);
+                    ClientHandler udpClientHandler = new UDPClientHandler(packet);
+                    udpClientHandler.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
