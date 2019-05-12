@@ -1,8 +1,13 @@
 import java.sql.Timestamp;
 import java.net.InetAddress;
 
-public class Message {
-    public Message(InetAddress ip, Integer port, Timestamp time, String command) {
-        System.out.println("[" + ip + ":" + port + " - " + time + "]: " + command);
+class Message {
+    private String message;
+    Message(InetAddress ip, Integer port, Timestamp time, String command) {
+        message = "[" + ip + ":" + port + " - " + time + "]: " + command;
+    }
+
+    void display() {
+        System.out.println(message);
     }
 }
