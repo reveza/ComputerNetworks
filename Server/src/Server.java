@@ -83,7 +83,10 @@ public class Server {
     }
 
     private static void initServer() {
+    }
 
+    private static void getUserPorts() {
+        // TODO change ports variables depending on user input
     }
 
 
