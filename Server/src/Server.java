@@ -62,7 +62,7 @@ public class Server {
         }
     }
 
-    public static void connectTCP() {
+    private static void initTCP() {
         //Try to connect the server on an unused port. Successful connection will return a socket
         try(ServerSocket TCPSocket = new ServerSocket(5001)) {
             TCPThread tcp = new TCPThread(TCPSocket);
