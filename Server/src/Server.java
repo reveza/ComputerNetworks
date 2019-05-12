@@ -42,10 +42,10 @@ public class Server {
         }
     }
     private static class TCPThread extends Thread {
-        ServerSocket TCPSocket;
+        ServerSocket tcpSocket;
 
         public TCPThread(ServerSocket socket) {
-            this.TCPSocket = socket;
+            this.tcpSocket = socket;
         }
 
         @Override
