@@ -13,11 +13,10 @@ public abstract class ClientHandler extends Thread {
 
     private static final String TCP_DIRECTORY = "./tcp";
     private static final String UDP_DIRECTORY = "./udp";
+    private final static String NOT_EXISTING_FILE_ERROR_MESSAGE = "The file does not exist!\n";
 
-    private static final String UDP_DIRECTORy;
-
-    private final String LIST_REQUEST = "ls";
-    private final String DOWNLOAD_REQUEST = "";
+    private static final String LIST_REQUEST = "ls";
+    private static final String DOWNLOAD_REQUEST = "";
 
 
     protected void manageRequest() {
@@ -26,7 +25,13 @@ public abstract class ClientHandler extends Thread {
         displayCommand(clientMessage);
             switch (clientMessage.split(" ")[0]) {
                 case LIST_REQUEST :
-                    writeData(getFilesInDirectory(directory));
+                    try {
+                        String data = getFilesInDirectory(directory).stream()
+                                .reduce("", (a, b) -> a + "[File] " + b + "\n");
+                        writeData(data);
+                    } catch (IOException e) {
+                        writeData(NOT_EXISTING_FILE_ERROR_MESSAGE);
+                    }
                     break;
                 case DOWNLOAD_REQUEST:
                     File fileToSend = getFile(directory, clientMessage.split(" ")[1]);
@@ -49,17 +54,17 @@ public abstract class ClientHandler extends Thread {
         }
     }
 
-    private String getFilesInDirectory(String path) {
-        try (Stream<Path> walk = Files.walk(Paths.get("C:\\projects"))) {
+    private List<String> getFilesInDirectory(String path) throws IOException {
+        List<String> result;
+        try (Stream<Path> walk = Files.walk(Paths.get(path))) {
 
-            List<String> result = walk.filter(Files::isRegularFile)
+            result = walk.filter(Files::isRegularFile)
                     .map(x -> "[File] " + x.toString()).collect(Collectors.toList());
-    
-            result.forEach(System.out::println);
-    
+
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         }
+        return result;
     }
 
     private File getFile(String directory, String fileName) {

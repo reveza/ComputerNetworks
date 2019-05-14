@@ -87,36 +87,39 @@ public class Server {
 
     private static int inputUserPorts(String networkType) {
         boolean success = true;
-        System.out.println("Input a port between 5001 and 5050 for " + networkType + " network : ");
+        System.out.print("Input a port between 5001 and 5050 for " + networkType + " network : ");
         int port;
         do {
             Scanner sc = new Scanner(System.in);
             if (!sc.hasNextInt()) {
-                success = false;
-                System.out.println("Is not an Integer. Retry.");
+                System.out.print("Is not an Integer. Retry for " + networkType + " network: ");
             } else {
                 port = sc.nextInt();
                 if (TCP_PORT != 1 && port == TCP_PORT) {
-                    success = false;
-                    System.out.println("Is a duplicate of TCP port. Retry.");
-                } else if (port < 5001 && port > 5050) {
-                    success = false;
-                    System.out.println("Is not between 5001 and 5050. Retry.");
-                } 
+                    System.out.print("Is a duplicate of TCP port. Retry for " + networkType + " network: ");
+                } else if (port < 5001 || port > 5050) {
+                    System.out.print("Is not between 5001 and 5050. Retry for " + networkType + " network: ");
+                } else {
+                    return port;
+                }
             }
-        } while (!success);
+        } while (true   );
     }
 
-    private static int inputTCPPort() {
+    private static void inputTCPPort() {
         TCP_PORT = inputUserPorts("tcp");
     }
 
-    private static int inputUDPPort() {
+    private static void inputUDPPort() {
         UDP_PORT = inputUserPorts("udp");
     }
 
     private static void displayServerIP() {
-        System.out.print(InetAddress.getLocalHost());
+        try {
+            System.out.println("Server ip address : " + InetAddress.getLocalHost().toString().split("/")[1]);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
 }

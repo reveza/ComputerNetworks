@@ -21,17 +21,31 @@ public class TCPClientHandler extends ClientHandler {
 
     @Override
     protected String readData() {
-        
-        return (String)this.inputStream.readObject();
+
+        try {
+            return (String)this.inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        // TODO arranger ca
+        return "";
     }
 
     @Override
     protected void writeData(String message) {
-        this.outputStream.writeObject(message);
+        try {
+            this.outputStream.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void writeData(File file) {
-        this.outputStream.writeObject(file);
+        try {
+            this.outputStream.writeObject(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

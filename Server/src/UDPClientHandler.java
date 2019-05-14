@@ -26,21 +26,25 @@ public class UDPClientHandler extends ClientHandler {
     protected void writeData(String message) {
         final byte[] buf = message.getBytes();
 
+        sendData(buf);
+    }
+
+    private void sendData(byte[] buf) {
         InetAddress address = this.messagePackets.getAddress();
         int port = this.messagePackets.getPort();
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
-        this.udpSocket.send(packet);
-
+        try {
+            this.udpSocket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void writeData(File file) {
         final byte[] buf = fileToBytes(file);
 
-        InetAddress address = this.messagePackets.getAddress();
-        int port = this.messagePackets.getPort();
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
-        this.udpSocket.send(packet);
+        sendData(buf);
     }
 
     private static byte[] fileToBytes(File file){
