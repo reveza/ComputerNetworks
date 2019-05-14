@@ -1,10 +1,11 @@
 import java.net.*;
 import java.io.*;
+import java.util.Scanner;
 
 public class Server {
 
-    static final int UDP_PORT = 5001;
-    static final int TCP_PORT = 5002;
+    static int UDP_PORT = 0;
+    static int TCP_PORT = 1;
 
     public static void main(String[] args) {
         initServer();
@@ -24,7 +25,7 @@ public class Server {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 try {
                     this.udpSocket.receive(packet);
-                    ClientHandler udpClientHandler = new UDPClientHandler(packet);
+                    ClientHandler udpClientHandler = new UDPClientHandler(packet, this.udpSocket);
                     udpClientHandler.start();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -77,13 +78,45 @@ public class Server {
     }
 
     private static void initServer() {
-        getUserPorts();
+        displayServerIP();
+        inputTCPPort();
+        inputUDPPort();
         initTCP();
         initUDP();
     }
 
-    private static void getUserPorts() {
-        // TODO change ports variables depending on user input
+    private static int inputUserPorts(String networkType) {
+        boolean success = true;
+        System.out.println("Input a port between 5001 and 5050 for " + networkType + " network : ");
+        int port;
+        do {
+            Scanner sc = new Scanner(System.in);
+            if (!sc.hasNextInt()) {
+                success = false;
+                System.out.println("Is not an Integer. Retry.");
+            } else {
+                port = sc.nextInt();
+                if (TCP_PORT != 1 && port == TCP_PORT) {
+                    success = false;
+                    System.out.println("Is a duplicate of TCP port. Retry.");
+                } else if (port < 5001 && port > 5050) {
+                    success = false;
+                    System.out.println("Is not between 5001 and 5050. Retry.");
+                } 
+            }
+        } while (!success);
+    }
+
+    private static int inputTCPPort() {
+        TCP_PORT = inputUserPorts("tcp");
+    }
+
+    private static int inputUDPPort() {
+        UDP_PORT = inputUserPorts("udp");
+    }
+
+    private static void displayServerIP() {
+        System.out.print(InetAddress.getLocalHost());
     }
 
 }

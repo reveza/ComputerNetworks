@@ -2,22 +2,37 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public abstract class ClientHandler extends Thread {
+
+    private static final String TCP_DIRECTORY = "./tcp";
+    private static final String UDP_DIRECTORY = "./udp";
+
+    private static final String UDP_DIRECTORy;
 
     private final String LIST_REQUEST = "ls";
     private final String DOWNLOAD_REQUEST = "";
 
+
     protected void manageRequest() {
         String clientMessage = readData();
+        String directory = this instanceof TCPClientHandler ? TCP_DIRECTORY : UDP_DIRECTORY;
         displayCommand(clientMessage);
-            switch (clientMessage) {
+            switch (clientMessage.split(" ")[0]) {
                 case LIST_REQUEST :
-                    writeData("");
+                    writeData(getFilesInDirectory(directory));
                     break;
                 case DOWNLOAD_REQUEST:
-                    writeData("");
+                    File fileToSend = getFile(directory, clientMessage.split(" ")[1]);
+                    writeData(fileToSend);
                     break;
+
             }
     }
 
@@ -32,6 +47,23 @@ public abstract class ClientHandler extends Thread {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+    }
+
+    private String getFilesInDirectory(String path) {
+        try (Stream<Path> walk = Files.walk(Paths.get("C:\\projects"))) {
+
+            List<String> result = walk.filter(Files::isRegularFile)
+                    .map(x -> "[File] " + x.toString()).collect(Collectors.toList());
+    
+            result.forEach(System.out::println);
+    
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private File getFile(String directory, String fileName) {
+        return new File(directory + "/" + fileName);
     }
 
     protected abstract String readData();

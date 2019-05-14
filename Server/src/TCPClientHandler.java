@@ -1,4 +1,4 @@
-import java.net.Socket;
+import java.net.*;
 import java.io.*;
 
 public class TCPClientHandler extends ClientHandler {
@@ -8,11 +8,10 @@ public class TCPClientHandler extends ClientHandler {
 
     TCPClientHandler(Socket connectionSocket) throws IOException {
         this.connectionSocket = connectionSocket;
-        inputStream = new ObjectInputStream(connectionSocket.getInputStream());
-        outputStream = new ObjectOutputStream(connectionSocket.getOutputStream());
+        this.inputStream = new ObjectInputStream(connectionSocket.getInputStream());
+        this.outputStream = new ObjectOutputStream(connectionSocket.getOutputStream());
     }
 
-    // code logique de gestion de requetes du client
     @Override
     public void run(){
         while (!connectionSocket.isClosed()) {
@@ -22,17 +21,17 @@ public class TCPClientHandler extends ClientHandler {
 
     @Override
     protected String readData() {
-        // TODO read from tcp
-        return "";
+        
+        return (String)this.inputStream.readObject();
     }
 
     @Override
     protected void writeData(String message) {
-        // TODO write file to tcp
+        this.outputStream.writeObject(message);
     }
 
     @Override
     protected void writeData(File file) {
-        // TODO write file to tcp
+        this.outputStream.writeObject(file);
     }
 }

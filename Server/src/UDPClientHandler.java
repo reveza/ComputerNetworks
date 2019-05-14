@@ -1,11 +1,15 @@
 import java.io.*;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 public class UDPClientHandler extends ClientHandler {
     private DatagramPacket messagePackets;
+    private DatagramSocket udpSocket;
 
-    UDPClientHandler(DatagramPacket messagePackets) {
+    UDPClientHandler(DatagramPacket messagePackets, DatagramSocket udpSocket) {
         this.messagePackets = messagePackets;
+        this.udpSocket = udpSocket;
     }
 
     @Override
@@ -15,17 +19,41 @@ public class UDPClientHandler extends ClientHandler {
 
     @Override
     protected String readData() {
-        // TODO read data from udp
-        return "";
+        return new String(this.messagePackets.getData());
     }
 
     @Override
     protected void writeData(String message) {
-        // TODO write string to udp
+        final byte[] buf = message.getBytes();
+
+        InetAddress address = this.messagePackets.getAddress();
+        int port = this.messagePackets.getPort();
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
+        this.udpSocket.send(packet);
+
     }
 
     @Override
     protected void writeData(File file) {
-        // TODO write file to udp
+        final byte[] buf = fileToBytes(file);
+
+        InetAddress address = this.messagePackets.getAddress();
+        int port = this.messagePackets.getPort();
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
+        this.udpSocket.send(packet);
+    }
+
+    private static byte[] fileToBytes(File file){
+        FileInputStream fis = null;
+        byte[] bArray = new byte[(int) file.length()];
+        try{
+            fis = new FileInputStream(file);
+            fis.read(bArray);
+            fis.close();      
+            
+        }catch(IOException ioExp){
+            ioExp.printStackTrace();
+        }
+        return bArray;
     }
 }
