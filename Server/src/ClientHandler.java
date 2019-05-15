@@ -14,7 +14,6 @@ public abstract class ClientHandler extends Thread {
     private static final String TCP_DIRECTORY = "./tcp";
     private static final String UDP_DIRECTORY = "./udp";
     private final static String NOT_EXISTING_FILE_ERROR_MESSAGE = "The file does not exist!\n";
-
     private static final String LIST_REQUEST = "ls";
     private static final String DOWNLOAD_REQUEST = "";
 
