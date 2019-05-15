@@ -8,8 +8,10 @@ public class TCPClientHandler extends ClientHandler {
 
     TCPClientHandler(Socket connectionSocket) throws IOException {
         this.connectionSocket = connectionSocket;
-        this.inputStream = new ObjectInputStream(connectionSocket.getInputStream());
         this.outputStream = new ObjectOutputStream(connectionSocket.getOutputStream());
+        this.inputStream = new ObjectInputStream(connectionSocket.getInputStream());
+
+        System.out.println("tcp output");
     }
 
     @Override

@@ -4,7 +4,7 @@ import java.net.InetAddress;
 class Message {
     private String message;
     Message(InetAddress ip, Integer port, Timestamp time, String command) {
-        message = "[" + ip + ":" + port + " - " + time + "]: " + command;
+        message = "[" + ip.getHostAddress() + ":" + port + " - " + time + "]: " + command;
     }
 
     void display() {

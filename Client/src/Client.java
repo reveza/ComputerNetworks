@@ -8,7 +8,7 @@ public class Client {
     private static int TCP_PORT;
     private static int UDP_PORT;
     
-    private static final InetAddress IP;
+    private static InetAddress IP;
     private static Socket tcpSocket;
     private static DatagramSocket udpSocket;
     private static boolean isTCP;
@@ -34,7 +34,7 @@ public class Client {
             ip = sc.nextLine();
             try {
                 IP = InetAddress.getByName(ip);
-                System.out.print("You are connected to " + IP.getHostName());
+                System.out.println("You are connected to " + IP.getHostAddress());
                 return;
             } catch (UnknownHostException e) {
                 System.out.print("Is not a valid ip address. Enter Server IP Address: ");
@@ -72,7 +72,6 @@ public class Client {
     }
 
     private static void inputConnectionMode() {
-        boolean success = true;
         System.out.print("Input a network mode. Type tcp or udp in small caps(type exit to quit): ");
         String networkMode;
         do {
@@ -100,16 +99,20 @@ public class Client {
         if (isTCP) {
             try {
                 tcpSocket = new Socket(IP, TCP_PORT);
-                inputTCP = new ObjectInputStream(tcpSocket.getInputStream());
                 outputTCP = new ObjectOutputStream(tcpSocket.getOutputStream());
+                inputTCP = new ObjectInputStream(tcpSocket.getInputStream());
+
                 handleMenu();
             } catch (IOException e) {
+                System.out.println("catch");
                 System.out.println("Connection impossible. Restart the process.");
                 inputInformation();
             }
         } else {
+
             try {
-                DatagramSocket udpSocket = new DatagramSocket();
+                udpSocket = new DatagramSocket();
+                handleMenu();
             } catch (SocketException e) {
                 System.out.println("Connection impossible. Restart the process.");
                 inputInformation();
@@ -139,14 +142,14 @@ public class Client {
                 if (command.equals("ls")) {
                     sendMessage(command);
                     receiveFileDirectory();
-                } else if (command.toString().split(" ")[0].equals("download")) {
+                } else if (command.split(" ")[0].equals("download")) {
                     sendMessage(command);
                     receiveDownloadedFile();
                 } else if (command.equals("exit")) {
                     closeSocket();
                     break;
                 }
-            } catch (IOException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
 
@@ -155,7 +158,11 @@ public class Client {
 
     private static void closeSocket() {
         if (isTCP) {
-            tcpSocket.close();
+            try {
+                tcpSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             udpSocket.close();
         }
@@ -163,21 +170,29 @@ public class Client {
 
     private static void sendMessage(String message) {
         if (isTCP) {
-            outputTCP.writeObject(message);
+            try {
+                outputTCP.writeObject(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             final byte[] buf = message.getBytes();
             DatagramPacket packet = new DatagramPacket(buf, buf.length, IP, UDP_PORT);
-            udpSocket.send(packet);
+            try {
+                udpSocket.send(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private static void receiveFileDirectory() {
+    private static void receiveFileDirectory() throws IOException, ClassNotFoundException {
         String directory;
         if (isTCP) {
             directory = (String)inputTCP.readObject();
         } else {
-            final byte[] buf;
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, IP, UDP_PORT);
+            byte[] buf = new byte[256];
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
             udpSocket.receive(packet);
             buf = packet.getData();
             directory = new String(buf);
@@ -185,14 +200,14 @@ public class Client {
         System.out.println(directory);
     }
 
-    private static void receiveDownloadedFile() {
+    private static void receiveDownloadedFile() throws IOException, ClassNotFoundException {
         
         File file;
         if (isTCP) {
             file = (File)inputTCP.readObject();
         } else {
-            final byte[] buf;
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, IP, UDP_PORT);
+            byte[] buf = new byte[256];
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
             udpSocket.receive(packet);
             buf = packet.getData();
             ByteArrayInputStream bis = new ByteArrayInputStream(buf);

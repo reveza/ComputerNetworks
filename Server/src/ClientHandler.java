@@ -59,7 +59,7 @@ public abstract class ClientHandler extends Thread {
         try (Stream<Path> walk = Files.walk(Paths.get(path))) {
 
             result = walk.filter(Files::isRegularFile)
-                    .map(x -> "[File] " + x.toString()).collect(Collectors.toList());
+                    .map(x -> x.getFileName().toString()).collect(Collectors.toList());
 
         } catch (IOException e) {
             throw e;

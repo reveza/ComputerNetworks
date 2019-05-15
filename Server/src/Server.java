@@ -115,7 +115,7 @@ public class Server {
 
     private static void displayServerIP() {
         try {
-            System.out.println("Server ip address : " + InetAddress.getLocalHost().toString().split("/")[1]);
+            System.out.println("Server ip address : " + InetAddress.getLocalHost().getHostAddress());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

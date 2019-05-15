@@ -49,9 +49,15 @@ public class UDPClientHandler extends ClientHandler {
 
     private static byte[] fileToBytes(File file){
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(file);
-        oos.flush();
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(bos);
+            oos.writeObject(file);
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         byte [] data = bos.toByteArray();
+        return data;
     }
 }
