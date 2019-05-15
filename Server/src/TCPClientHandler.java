@@ -35,6 +35,7 @@ public class TCPClientHandler extends ClientHandler {
     protected void writeData(String message) {
         try {
             this.outputStream.writeObject(message);
+            this.outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -44,6 +45,7 @@ public class TCPClientHandler extends ClientHandler {
     protected void writeData(File file) {
         try {
             this.outputStream.writeObject(file);
+            this.outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -86,7 +86,6 @@ public class Server {
     }
 
     private static int inputUserPorts(String networkType) {
-        boolean success = true;
         System.out.print("Input a port between 5001 and 5050 for " + networkType + " network : ");
         int port;
         do {
@@ -103,7 +102,7 @@ public class Server {
                     return port;
                 }
             }
-        } while (true   );
+        } while (true);
     }
 
     private static void inputTCPPort() {
