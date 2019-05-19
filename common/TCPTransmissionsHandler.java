@@ -22,12 +22,18 @@ public class TCPTransmissionsHandler extends TransmissionsHandler {
 
     @Override
     public String readMessage() throws IOException {
-        return new BufferedReader(new InputStreamReader(inputStream)).readLine();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder builder= new StringBuilder();
+        char character;
+        while ((character = (char)bufferedReader.read()) != '\0') {
+            builder.append(character);
+        }
+        return builder.toString();
     }
 
     @Override
-    public File readFile(String path) throws IOException {
-        File file = new File(path);
+    public File readFile(String fileName) throws IOException {
+        File file = new File(Utils.TCP_DIRECTORY + fileName);
         FileOutputStream fileOutputStream = new FileOutputStream(file);
 
         int length;
@@ -41,7 +47,9 @@ public class TCPTransmissionsHandler extends TransmissionsHandler {
 
     @Override
     public void sendMessage(String message) {
-        new PrintWriter(outputStream).print(message);
+        PrintWriter printer = new PrintWriter(outputStream);
+        printer.print(message + '\0');
+        printer.flush();
     }
 
     @Override

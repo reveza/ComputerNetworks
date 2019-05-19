@@ -12,19 +12,9 @@ public class TCPClientHandler extends ClientHandler {
         while (!((TCPTransmissionsHandler)transmissionsHandler).isClosed()) {
             try {
                 manageRequest();
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (IOException e) {
                 break;
             }
         }
-    }
-
-    @Override
-    protected String readData() throws IOException, ClassNotFoundException {
-        return transmissionsHandler.readData();
-    }
-
-    @Override
-    protected <T>void writeData(T message) throws IOException {
-        transmissionsHandler.writeData(message);
     }
 }

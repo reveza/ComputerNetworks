@@ -3,7 +3,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.Arrays;
 
 public class UDPTransmissionsHandler extends TransmissionsHandler {
 
@@ -32,8 +31,8 @@ public class UDPTransmissionsHandler extends TransmissionsHandler {
     }
 
     @Override
-    public File readFile(String path) throws IOException {
-        File file = new File(path);
+    public File readFile(String fileName) throws IOException {
+        File file = new File(Utils.UDP_DIRECTORY + fileName);
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         byte[] rawData = new byte[BUFFER_SIZE];
         while (true) {

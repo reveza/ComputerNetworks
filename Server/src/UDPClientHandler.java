@@ -13,16 +13,6 @@ public class UDPClientHandler extends ClientHandler {
     public void run() {
         try {
             manageRequest();
-        } catch (IOException | ClassNotFoundException ignored) {}
-    }
-
-    @Override
-    protected String readData() throws IOException, ClassNotFoundException {
-        return transmissionsHandler.readData();
-    }
-
-    @Override
-    protected <T>void writeData(T message) throws IOException {
-        transmissionsHandler.writeData(message);
+        } catch (IOException ignored) {}
     }
 }

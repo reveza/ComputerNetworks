@@ -11,33 +11,28 @@ import java.util.stream.Collectors;
 
 public abstract class ClientHandler extends Thread {
 
-    private static final String TCP_DIRECTORY = "./tcp";
-    private static final String UDP_DIRECTORY = "./udp";
-    private final static String NOT_EXISTING_FILE_ERROR_MESSAGE = "The file does not exist!\n";
-
     protected TransmissionsHandler transmissionsHandler;
 
 
-    protected void manageRequest() throws IOException, ClassNotFoundException {
+    protected void manageRequest() throws IOException {
         System.out.println("prep");
-        String clientMessage = readData();
+        String clientMessage = transmissionsHandler.readMessage();
         System.out.println("client message : " + clientMessage);
-        System.out.println(clientMessage);
-        String directory = this instanceof TCPClientHandler ? TCP_DIRECTORY : UDP_DIRECTORY;
+        String directory = this instanceof TCPClientHandler ? Utils.TCP_DIRECTORY : Utils.UDP_DIRECTORY;
         displayCommand(clientMessage);
             switch (clientMessage.split(" ")[0]) {
                 case Utils.LIST_COMMAND :
                     try {
                         String data = getFilesInDirectory(directory).stream()
                                 .reduce("", (a, b) -> a + "[File] " + b + "\n");
-                        writeData(data);
+                        transmissionsHandler.sendMessage(data);
                     } catch (IOException e) {
-                        writeData(NOT_EXISTING_FILE_ERROR_MESSAGE);
+                        e.printStackTrace();
                     }
                     break;
                 case Utils.DOWNLOAD_COMMAND:
                     File fileToSend = getFile(directory, clientMessage.split(" ")[1]);
-                    writeData(fileToSend);
+                    transmissionsHandler.sendFile(fileToSend);
                     break;
 
             }
@@ -70,9 +65,6 @@ public abstract class ClientHandler extends Thread {
     }
 
     private File getFile(String directory, String fileName) {
-        return new File(directory + "/" + fileName);
+        return new File(directory + fileName);
     }
-
-    protected abstract String readData() throws IOException, ClassNotFoundException;
-    protected abstract <T>void writeData(T message) throws IOException, ClassNotFoundException;
 }

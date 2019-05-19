@@ -128,13 +128,15 @@ public class Client {//TODO comment code
     }
 
     private static void requestDirectoryList() throws IOException, ClassNotFoundException {
-        transmissionsHandler.writeData(Utils.LIST_COMMAND);
-        System.out.println(transmissionsHandler.<String>readData());
+        transmissionsHandler.sendMessage(Utils.LIST_COMMAND);
+        System.out.println(transmissionsHandler.readMessage());
     }
 
     private static void requestFile(String command) throws IOException, ClassNotFoundException {
-        transmissionsHandler.<File>readData().mkdir();
-        System.out.println("The file " + command.split(" ")[1] + " is received.");
+        String fileName = command.split(" ")[1];
+        transmissionsHandler.sendMessage(command);
+        transmissionsHandler.readFile(fileName);
+        System.out.println("The file " + fileName + " is received.");
     }
 
     private static void setupConnection(int port, boolean isTCP) {
