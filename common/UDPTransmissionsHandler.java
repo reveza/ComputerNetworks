@@ -1,10 +1,13 @@
-import java.io.IOException;
+import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Arrays;
 
 public class UDPTransmissionsHandler extends TransmissionsHandler {
+
+    private static final int BUFFER_SIZE = 1024;
 
     private DatagramSocket socket;
     private InetAddress sendAddress;
@@ -21,38 +24,54 @@ public class UDPTransmissionsHandler extends TransmissionsHandler {
     }
 
     @Override
-    public <T> T readData() throws IOException, ClassNotFoundException {
-        byte[] rawData = new byte[getMessageLength()];
+    public String readMessage() throws IOException {
+        byte[] rawData = new byte[BUFFER_SIZE];
         DatagramPacket inData = new DatagramPacket(rawData, rawData.length);
         socket.receive(inData);
-
-        return Utils.deserializeObject(rawData);
+        return new String(inData.getData(), 0, inData.getLength());
     }
 
     @Override
-    public <T> void writeData(T object) throws IOException {
-        byte[] rawData = Utils.serializeObject(object);
-        sendMessageLength(rawData.length);
+    public File readFile(String path) throws IOException {
+        File file = new File(path);
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        byte[] rawData = new byte[BUFFER_SIZE];
+        while (true) {
+            DatagramPacket inData = new DatagramPacket(rawData, rawData.length);
+            socket.receive(inData);
+            fileOutputStream.write(inData.getData(), 0, inData.getLength());
+            if (inData.getLength() < BUFFER_SIZE) {
+                break;
+            }
+        }
+        fileOutputStream.close();
+
+        return file;
+    }
+
+    @Override
+    public void sendMessage(String message) throws IOException {
+        byte[] rawData = message.getBytes();
         DatagramPacket outData = new DatagramPacket(rawData, rawData.length, sendAddress, sendPort);
         socket.send(outData);
+    }
+
+    @Override
+    public void sendFile(File file) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] rawData = new byte[BUFFER_SIZE];
+        int length;
+        while ((length = fileInputStream.read(rawData, 0, rawData.length)) != -1) {
+            DatagramPacket outData = new DatagramPacket(rawData, length, sendAddress, sendPort);
+            socket.send(outData);
+        }
+
+        fileInputStream.close();
     }
 
     @Override
     public void close() {
         this.socket.close();
-    }
-
-    private int getMessageLength() throws IOException {
-        byte[] rawData = new byte[4];
-        DatagramPacket inData = new DatagramPacket(rawData, rawData.length);
-        this.socket.receive(inData);
-        return Utils.deserializeInteger(rawData);
-    }
-
-    private void sendMessageLength(int length) throws IOException {
-        byte[] rawData = Utils.serializeInteger(length);
-        DatagramPacket outData = new DatagramPacket(rawData, rawData.length, sendAddress, sendPort);
-        socket.send(outData);
     }
 
     public void connect(InetAddress address, int port) {
