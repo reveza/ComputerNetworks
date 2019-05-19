@@ -76,7 +76,7 @@ public class Client {//TODO comment code
                     setupConnection(inputUserPorts(networkMode), networkMode.equals("tcp"));
                     return;
                 default:
-                    System.out.println("Wrong input! Please enter tcp or udp (type exit to quit): ");
+                    System.out.print("Wrong input! Please enter tcp or udp (type exit to quit): ");
             }
 
         } while (true);
