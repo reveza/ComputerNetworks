@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class TCPTransmissionsHandler extends TransmissionsHandler {
 
@@ -30,7 +32,7 @@ public class TCPTransmissionsHandler extends TransmissionsHandler {
 
         int length = 0;
         byte[] bytes = new byte[1024];
-        while ((length = is.read(bytes)) != -1) {
+        while ((length = inputStream.read(bytes)) != -1) {
             outputStream.write(bytes, 0, length);
         }
         return file;
@@ -38,12 +40,14 @@ public class TCPTransmissionsHandler extends TransmissionsHandler {
 
     @Override
     public void sendMessage(String message) {
-        this.outputStream.writeObject(object);
+        new PrintWriter(outputStream).print(message);
     }
 
     @Override
-    public void sendFile(File file) {
-        this.outputStream.writeObject(object);
+    public void sendFile(File file) throws IOException {
+        Path path = file.toPath();
+        Files.copy(path, outputStream);
+        outputStream.flush();
     }
 
     @Override
