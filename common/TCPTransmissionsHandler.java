@@ -28,13 +28,14 @@ public class TCPTransmissionsHandler extends TransmissionsHandler {
     @Override
     public File readFile(String path) throws IOException {
         File file = new File(path);
-        outputStream = new FileOutputStream(file);
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
 
-        int length = 0;
+        int length;
         byte[] bytes = new byte[1024];
         while ((length = inputStream.read(bytes)) != -1) {
-            outputStream.write(bytes, 0, length);
+            fileOutputStream.write(bytes, 0, length);
         }
+        fileOutputStream.close();
         return file;
     }
 
