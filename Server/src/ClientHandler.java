@@ -14,16 +14,19 @@ public abstract class ClientHandler extends Thread {
     private static final String TCP_DIRECTORY = "./tcp";
     private static final String UDP_DIRECTORY = "./udp";
     private final static String NOT_EXISTING_FILE_ERROR_MESSAGE = "The file does not exist!\n";
-    private static final String LIST_REQUEST = "ls";
-    private static final String DOWNLOAD_REQUEST = "";
+
+    protected TransmissionsHandler transmissionsHandler;
 
 
-    protected void manageRequest() {
+    protected void manageRequest() throws IOException, ClassNotFoundException {
+        System.out.println("prep");
         String clientMessage = readData();
+        System.out.println("client message : " + clientMessage);
+        System.out.println(clientMessage);
         String directory = this instanceof TCPClientHandler ? TCP_DIRECTORY : UDP_DIRECTORY;
         displayCommand(clientMessage);
             switch (clientMessage.split(" ")[0]) {
-                case LIST_REQUEST :
+                case Utils.LIST_COMMAND :
                     try {
                         String data = getFilesInDirectory(directory).stream()
                                 .reduce("", (a, b) -> a + "[File] " + b + "\n");
@@ -32,7 +35,7 @@ public abstract class ClientHandler extends Thread {
                         writeData(NOT_EXISTING_FILE_ERROR_MESSAGE);
                     }
                     break;
-                case DOWNLOAD_REQUEST:
+                case Utils.DOWNLOAD_COMMAND:
                     File fileToSend = getFile(directory, clientMessage.split(" ")[1]);
                     writeData(fileToSend);
                     break;
@@ -70,7 +73,6 @@ public abstract class ClientHandler extends Thread {
         return new File(directory + "/" + fileName);
     }
 
-    protected abstract String readData();
-    protected abstract void writeData(String message);
-    protected abstract void writeData(File file);
+    protected abstract String readData() throws IOException, ClassNotFoundException;
+    protected abstract <T>void writeData(T message) throws IOException, ClassNotFoundException;
 }

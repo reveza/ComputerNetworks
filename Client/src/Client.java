@@ -2,60 +2,59 @@ import java.net.*;
 import java.io.*;
 import java.util.Scanner;
 import java.net.InetAddress;
-public class Client {
-    
-                
-    private static int TCP_PORT;
-    private static int UDP_PORT;
-    
-    private static InetAddress IP;
-    private static Socket tcpSocket;
-    private static DatagramSocket udpSocket;
-    private static boolean isTCP;
-    private static ObjectInputStream inputTCP;
-    private static ObjectOutputStream outputTCP;
+public class Client {//TODO comment code
+    //TODO rapport de lab
+
+    private static TransmissionsHandler transmissionsHandler;
+    private final static String BACK_COMMAND = "back";
+    private final static String EXIT_COMMAND = "exit";
+
+    private static boolean validServerAddress = false;
+    private static boolean connected = false;
+
+    private static InetAddress serverAddress;
 
     public static void main(String[] args) {
-        inputInformation();
-        initConnection();
+        while (true) {
+            inputServerAddress();
+            do {
+                inputConnectionMode();
+                if (validServerAddress && connected) {
+                    handleMenu();
+                }
+            } while (validServerAddress);
+        }
     }
 
-    private static void inputInformation() {
-        inputIPAddress();
-        inputConnectionMode();
-    }
-
-    private static void inputIPAddress() {
-        System.out.print("Input Server IP Address: ");
-        String ip;
+    private static void inputServerAddress() {
+        System.out.print("Input the server address (type exit to quit): ");
+        String userInput;
         do {
             Scanner sc = new Scanner(System.in);
-            
-            ip = sc.nextLine();
+            userInput = sc.nextLine();
+            tryClose(userInput);
             try {
-                IP = InetAddress.getByName(ip);
-                System.out.println("You are connected to " + IP.getHostAddress());
+                serverAddress = InetAddress.getByName(userInput);
                 return;
             } catch (UnknownHostException e) {
-                System.out.print("Is not a valid ip address. Enter Server IP Address: ");
+                System.out.print("Is not a valid ip address. Enter a valid server address (type exit to quit): ");
             }
-                
+
         } while (true);
     }
 
     private static int inputUserPorts(String networkType) {
-        System.out.print("Input a port between 5001 and 5050 for " + networkType + " network : ");
+        System.out.print("Input a port between 5001 and 5050 for " + networkType + " network (type exit to quit): ");
         int port;
         do {
             Scanner sc = new Scanner(System.in);
             if (!sc.hasNextInt()) {
-                System.out.print("Is not an Integer. Retry for " + networkType + " network: ");
+                tryClose(sc.nextLine());
+                System.out.print("Is not an Integer. Retry for " + networkType + " network (type exit to quit): ");
             } else {
                 port = sc.nextInt();
-                if (TCP_PORT != 1 && port == TCP_PORT) {
-                    System.out.print("Is a duplicate of TCP port. Retry for " + networkType + " network: ");
-                } else if (port < 5001 || port > 5050) {
-                    System.out.print("Is not between 5001 and 5050. Retry for " + networkType + " network: ");
+                if (port < 5001 || port > 5050) {
+                    System.out.print("Is not between 5001 and 5050. Retry for " + networkType + " network (type exit to quit): ");
                 } else {
                     return port;
                 }
@@ -63,61 +62,24 @@ public class Client {
         } while (true);
     }
 
-    private static void inputTCPPort() {
-        TCP_PORT = inputUserPorts("tcp");
-    }
-
-    private static void inputUDPPort() {
-        UDP_PORT = inputUserPorts("udp");
-    }
-
     private static void inputConnectionMode() {
-        System.out.print("Input a network mode. Type tcp or udp in small caps(type exit to quit): ");
+        System.out.print("Input a network mode. Type tcp or udp (type exit to quit): ");
         String networkMode;
         do {
             Scanner sc = new Scanner(System.in);
-            
+
             networkMode = sc.nextLine();
-            if ( networkMode.equals("tcp") ) {
-                isTCP = true;
-                inputTCPPort();
-                return; 
-            } else if (networkMode.equals("udp")) {
-                isTCP = false;
-                inputUDPPort();
-                return;
-            } else if (networkMode.equals("exit")) {
-                System.exit(0);
-            } else {
-                System.out.println("Wrong input! Please enter tcp or udp(type exit to quit) : ");
+            tryClose(networkMode);
+            switch (networkMode.toLowerCase()) {
+                case "tcp":
+                case "udp":
+                    setupConnection(inputUserPorts(networkMode), networkMode.equals("tcp"));
+                    return;
+                default:
+                    System.out.println("Wrong input! Please enter tcp or udp (type exit to quit): ");
             }
-                
+
         } while (true);
-    }
-
-    private static void initConnection() {
-        if (isTCP) {
-            try {
-                tcpSocket = new Socket(IP, TCP_PORT);
-                outputTCP = new ObjectOutputStream(tcpSocket.getOutputStream());
-                inputTCP = new ObjectInputStream(tcpSocket.getInputStream());
-
-                handleMenu();
-            } catch (IOException e) {
-                System.out.println("catch");
-                System.out.println("Connection impossible. Restart the process.");
-                inputInformation();
-            }
-        } else {
-
-            try {
-                udpSocket = new DatagramSocket();
-                handleMenu();
-            } catch (SocketException e) {
-                System.out.println("Connection impossible. Restart the process.");
-                inputInformation();
-            }
-        }
     }
 
     private static void handleMenu() {
@@ -127,94 +89,76 @@ public class Client {
 
     private static void displayMenu() {
         System.out.println("Choose one of the following commands:\n" +
-        "ls : Display files of directory\n" +
-        "download <filename> : Download a file from the directory\n" +
-        "back: Go back to choose a different port or to exit the app.\n");
+        "\tls : Display files of directory\n" +
+        "\tdownload <filename> : Download a file from the directory\n" +
+        "\tback : Go back to choose a different port.\n" +
+        "\texit : Exit the app.\n");
     }
 
     private static void menuListener() {
         String command;
-        do {
+        boolean goBack = false;
+        while (!goBack) {
             Scanner sc = new Scanner(System.in);
-            
+
+            System.out.print(">> ");
+
             command = sc.nextLine();
+            tryClose(command);
+
             try {
-                if (command.equals("ls")) {
-                    sendMessage(command);
-                    receiveFileDirectory();
-                } else if (command.split(" ")[0].equals("download")) {
-                    sendMessage(command);
-                    receiveDownloadedFile();
-                } else if (command.equals("exit")) {
-                    closeSocket();
-                    break;
+                switch (command.split(" ")[0]) {
+                    case Utils.LIST_COMMAND:
+                        requestDirectoryList();
+                        break;
+                    case Utils.DOWNLOAD_COMMAND:
+                        requestFile(command);
+                        break;
+                    case BACK_COMMAND:
+                        goBack = true;
+                        break;
+                    default:
+                        System.out.println("Enter a valid command!");
                 }
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
-            }
-
-        } while(true);
-    }
-
-    private static void closeSocket() {
-        if (isTCP) {
-            try {
-                tcpSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            udpSocket.close();
-        }
-    }
-
-    private static void sendMessage(String message) {
-        if (isTCP) {
-            try {
-                outputTCP.writeObject(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            final byte[] buf = message.getBytes();
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, IP, UDP_PORT);
-            try {
-                udpSocket.send(packet);
-            } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Something went wrong :/");
             }
         }
     }
 
-    private static void receiveFileDirectory() throws IOException, ClassNotFoundException {
-        String directory;
-        if (isTCP) {
-            directory = (String)inputTCP.readObject();
-        } else {
-            byte[] buf = new byte[256];
-            DatagramPacket packet = new DatagramPacket(buf, buf.length);
-            udpSocket.receive(packet);
-            buf = packet.getData();
-            directory = new String(buf);
-        }
-        System.out.println(directory);
+    private static void requestDirectoryList() throws IOException, ClassNotFoundException {
+        transmissionsHandler.writeData(Utils.LIST_COMMAND);
+        System.out.println(transmissionsHandler.<String>readData());
     }
 
-    private static void receiveDownloadedFile() throws IOException, ClassNotFoundException {
-        
-        File file;
-        if (isTCP) {
-            file = (File)inputTCP.readObject();
-        } else {
-            byte[] buf = new byte[256];
-            DatagramPacket packet = new DatagramPacket(buf, buf.length);
-            udpSocket.receive(packet);
-            buf = packet.getData();
-            ByteArrayInputStream bis = new ByteArrayInputStream(buf);
-            ObjectInputStream ois = new ObjectInputStream(bis);
-            file = (File)ois.readObject();
+    private static void requestFile(String command) throws IOException, ClassNotFoundException {
+        transmissionsHandler.<File>readData().mkdir();
+        System.out.println("The file " + command.split(" ")[1] + " is received.");
+    }
+
+    private static void setupConnection(int port, boolean isTCP) {
+        try {
+            System.out.println(isTCP);
+            transmissionsHandler = isTCP ? new TCPTransmissionsHandler(port, serverAddress) : new UDPTransmissionsHandler(port, serverAddress);
+            validServerAddress = true;
+            connected = true;
+        } catch (IOException e) {
+            connected = false;
+            System.out.println("Connection impossible. Restart the process.");
         }
-        System.out.println("The file " + file.getName() + " has been downloaded.");
-        file.mkdir();
+    }
+
+    private static void tryClose(String userInput) {
+        if (userInput.equals(EXIT_COMMAND)) {
+            close();
+        }
+    }
+
+    private static void close() {
+        if (transmissionsHandler != null) {
+            transmissionsHandler.close();
+        }
+        System.exit(0);
     }
 }
