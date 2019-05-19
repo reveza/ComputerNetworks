@@ -15,9 +15,7 @@ public abstract class ClientHandler extends Thread {
 
 
     protected void manageRequest() throws IOException {
-        System.out.println("prep");
-        String clientMessage = transmissionsHandler.readMessage();
-        System.out.println("client message : " + clientMessage);
+        String clientMessage = readMessage();
         String directory = this instanceof TCPClientHandler ? Utils.TCP_DIRECTORY : Utils.UDP_DIRECTORY;
         displayCommand(clientMessage);
             switch (clientMessage.split(" ")[0]) {
@@ -25,14 +23,14 @@ public abstract class ClientHandler extends Thread {
                     try {
                         String data = getFilesInDirectory(directory).stream()
                                 .reduce("", (a, b) -> a + "[File] " + b + "\n");
-                        transmissionsHandler.sendMessage(data);
+                        sendMessage(data);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     break;
                 case Utils.DOWNLOAD_COMMAND:
                     File fileToSend = getFile(directory, clientMessage.split(" ")[1]);
-                    transmissionsHandler.sendFile(fileToSend);
+                    sendFile(fileToSend);
                     break;
 
             }
@@ -67,4 +65,8 @@ public abstract class ClientHandler extends Thread {
     private File getFile(String directory, String fileName) {
         return new File(directory + fileName);
     }
+
+    protected abstract String readMessage() throws IOException;
+    protected abstract void sendMessage(String message) throws IOException;
+    protected abstract void sendFile(File file) throws IOException;
 }

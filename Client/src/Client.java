@@ -120,19 +120,19 @@ public class Client {//TODO comment code
                     default:
                         System.out.println("Enter a valid command!");
                 }
-            } catch (ClassNotFoundException | IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("Something went wrong :/");
             }
         }
     }
 
-    private static void requestDirectoryList() throws IOException, ClassNotFoundException {
+    private static void requestDirectoryList() throws IOException {
         transmissionsHandler.sendMessage(Utils.LIST_COMMAND);
         System.out.println(transmissionsHandler.readMessage());
     }
 
-    private static void requestFile(String command) throws IOException, ClassNotFoundException {
+    private static void requestFile(String command) throws IOException {
         String fileName = command.split(" ")[1];
         transmissionsHandler.sendMessage(command);
         transmissionsHandler.readFile(fileName);
@@ -141,7 +141,6 @@ public class Client {//TODO comment code
 
     private static void setupConnection(int port, boolean isTCP) {
         try {
-            System.out.println(isTCP);
             transmissionsHandler = isTCP ? new TCPTransmissionsHandler(port, serverAddress) : new UDPTransmissionsHandler(port, serverAddress);
             validServerAddress = true;
             connected = true;

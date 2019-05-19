@@ -69,10 +69,10 @@ public class Server {
 
     private static void initUDP() {
         try {
-            DatagramSocket udpSocket = new DatagramSocket(UDP_PORT);
+            DatagramSocket udpSocket = new DatagramSocket(UDP_PORT, InetAddress.getLocalHost());
             Thread udpThread = new UDPThread(udpSocket);
             udpThread.start();
-        } catch (SocketException e) {
+        } catch (SocketException | UnknownHostException e) {
             e.printStackTrace();
         }
     }

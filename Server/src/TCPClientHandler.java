@@ -17,4 +17,19 @@ public class TCPClientHandler extends ClientHandler {
             }
         }
     }
+
+    @Override
+    protected String readMessage() throws IOException {
+        return transmissionsHandler.readMessage();
+    }
+
+    @Override
+    protected void sendMessage(String message) throws IOException {
+        transmissionsHandler.sendMessage(message);
+    }
+
+    @Override
+    protected void sendFile(File file) throws IOException {
+        transmissionsHandler.sendFile(file);
+    }
 }
