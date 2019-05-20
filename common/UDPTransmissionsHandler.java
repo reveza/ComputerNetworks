@@ -6,8 +6,6 @@ import java.net.SocketException;
 
 public class UDPTransmissionsHandler extends TransmissionsHandler {
 
-    private static final int BUFFER_SIZE = 4096;
-
     private DatagramSocket socket;
     private InetAddress sendAddress;
     private int sendPort;

@@ -37,9 +37,13 @@ public class TCPTransmissionsHandler extends TransmissionsHandler {
         FileOutputStream fileOutputStream = new FileOutputStream(file);
 
         int length;
-        byte[] bytes = new byte[1024];
-        while ((length = inputStream.read(bytes)) != -1) {
-            fileOutputStream.write(bytes, 0, length);
+        byte[] buffer = new byte[8];
+        inputStream.read(buffer);
+        long fileSize = Utils.bytesToLong(buffer);
+        buffer = new byte[BUFFER_SIZE];
+        while (fileSize > 0 && (length = inputStream.read(buffer)) != -1) {
+            fileSize -= length;
+            fileOutputStream.write(buffer, 0, length);
         }
         fileOutputStream.close();
         return file;
@@ -54,9 +58,17 @@ public class TCPTransmissionsHandler extends TransmissionsHandler {
 
     @Override
     public void sendFile(File file) throws IOException {
-        Path path = file.toPath();
-        Files.copy(path, outputStream);
-        outputStream.flush();
+        FileInputStream fileInputStream = new FileInputStream(file);
+
+        byte[] buffer = Utils.longToBytes(file.length());
+        outputStream.write(buffer);
+
+        buffer = new byte[BUFFER_SIZE];
+        int length;
+        while ((length = fileInputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, length);
+        }
+        fileInputStream.close();
     }
 
     @Override

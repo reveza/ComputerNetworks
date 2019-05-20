@@ -18,7 +18,7 @@ public abstract class ClientHandler extends Thread {
         String clientMessage = readMessage();
         String directory = this instanceof TCPClientHandler ? Utils.TCP_DIRECTORY : Utils.UDP_DIRECTORY;
         displayCommand(clientMessage);
-            switch (clientMessage.split(" ")[0]) {
+            switch (clientMessage.split(" ", 2)[0]) {
                 case Utils.LIST_COMMAND :
                     try {
                         String data = getFilesInDirectory(directory).stream()
@@ -29,7 +29,7 @@ public abstract class ClientHandler extends Thread {
                     }
                     break;
                 case Utils.DOWNLOAD_COMMAND:
-                    File fileToSend = getFile(directory, clientMessage.split(" ")[1]);
+                    File fileToSend = getFile(directory, clientMessage.split(" ", 2)[1]);
                     sendFile(fileToSend);
                     break;
 

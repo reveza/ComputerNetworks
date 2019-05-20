@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.net.InetAddress;
 public class Client {//TODO comment code
     //TODO rapport de lab
+    //TODO tell user if file does not exist
 
     private static TransmissionsHandler transmissionsHandler;
     private final static String BACK_COMMAND = "back";
@@ -107,7 +108,7 @@ public class Client {//TODO comment code
             tryClose(command);
 
             try {
-                switch (command.split(" ")[0]) {
+                switch (command.split(" ", 2)[0]) {
                     case Utils.LIST_COMMAND:
                         requestDirectoryList();
                         break;
@@ -133,7 +134,7 @@ public class Client {//TODO comment code
     }
 
     private static void requestFile(String command) throws IOException {
-        String fileName = command.split(" ")[1];
+        String fileName = command.split(" ", 2)[1];
         transmissionsHandler.sendMessage(command);
         transmissionsHandler.readFile(fileName);
         System.out.println("The file " + fileName + " is received.\n");
