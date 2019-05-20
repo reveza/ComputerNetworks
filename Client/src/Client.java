@@ -136,7 +136,7 @@ public class Client {//TODO comment code
         String fileName = command.split(" ")[1];
         transmissionsHandler.sendMessage(command);
         transmissionsHandler.readFile(fileName);
-        System.out.println("The file " + fileName + " is received.");
+        System.out.println("The file " + fileName + " is received.\n");
     }
 
     private static void setupConnection(int port, boolean isTCP) {
