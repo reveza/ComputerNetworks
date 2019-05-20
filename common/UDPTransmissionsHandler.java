@@ -3,11 +3,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.Arrays;
 
 public class UDPTransmissionsHandler extends TransmissionsHandler {
 
-    private static final int BUFFER_SIZE = 1024;
+    private static final int BUFFER_SIZE = 4096;
 
     private DatagramSocket socket;
     private InetAddress sendAddress;
@@ -39,10 +38,10 @@ public class UDPTransmissionsHandler extends TransmissionsHandler {
         while (true) {
             DatagramPacket inData = new DatagramPacket(rawData, rawData.length);
             socket.receive(inData);
-            fileOutputStream.write(inData.getData(), 0, inData.getLength());
-            if (inData.getLength() < BUFFER_SIZE) {
+            if (inData.getLength() == 0) {
                 break;
             }
+            fileOutputStream.write(inData.getData(), 0, inData.getLength());
         }
         fileOutputStream.close();
 
@@ -65,6 +64,8 @@ public class UDPTransmissionsHandler extends TransmissionsHandler {
             DatagramPacket outData = new DatagramPacket(rawData, length, sendAddress, sendPort);
             socket.send(outData);
         }
+        DatagramPacket outData = new DatagramPacket(rawData, 0, sendAddress, sendPort);
+        socket.send(outData);
 
         fileInputStream.close();
     }
