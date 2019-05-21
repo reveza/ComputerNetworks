@@ -12,17 +12,22 @@ public class UDPClientHandler extends ClientHandler {
         ((UDPTransmissionsHandler)transmissionsHandler).connect(messagePackets.getAddress(), messagePackets.getPort());
     }
 
+    // executes the handling of transmission handler request only once
     @Override
     public void run() {
         try {
             manageRequest();
         } catch (IOException ignored) {}
+        transmissionsHandler.close();
     }
 
+    // readMessage returns the message read from the main udp server thread
     @Override
     protected String readMessage() {
         return message;
     }
+
+    // send functions "blank" to transmissionHandler TODO find word
 
     @Override
     protected void sendMessage(String message) throws IOException {

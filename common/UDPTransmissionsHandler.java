@@ -20,6 +20,7 @@ public class UDPTransmissionsHandler extends TransmissionsHandler {
         this.socket = socket;
     }
 
+    // reads a string with max length of BUFFER_SIZE
     @Override
     public String readMessage() throws IOException {
         byte[] rawData = new byte[BUFFER_SIZE];
@@ -28,11 +29,13 @@ public class UDPTransmissionsHandler extends TransmissionsHandler {
         return new String(inData.getData(), 0, inData.getLength());
     }
 
+    // receives and writes file in udp directory
     @Override
     public File readFile(String fileName) throws IOException {
         File file = new File(Utils.UDP_DIRECTORY + fileName);
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         byte[] rawData = new byte[BUFFER_SIZE];
+        // awaits for DatagramPacket until it has received end datagram packet identifiable with length 0
         while (true) {
             DatagramPacket inData = new DatagramPacket(rawData, rawData.length);
             socket.receive(inData);
@@ -46,6 +49,7 @@ public class UDPTransmissionsHandler extends TransmissionsHandler {
         return file;
     }
 
+    // sends the BUFFER_SIZE first characters of the string (if in UTF-8)
     @Override
     public void sendMessage(String message) throws IOException {
         byte[] rawData = message.getBytes();
@@ -53,6 +57,7 @@ public class UDPTransmissionsHandler extends TransmissionsHandler {
         socket.send(outData);
     }
 
+    // sends the file through a series of DatagramPackets
     @Override
     public void sendFile(File file) throws IOException {
         FileInputStream fileInputStream = new FileInputStream(file);
@@ -62,17 +67,20 @@ public class UDPTransmissionsHandler extends TransmissionsHandler {
             DatagramPacket outData = new DatagramPacket(rawData, length, sendAddress, sendPort);
             socket.send(outData);
         }
+        // ends file transmission with end datagram packet with length 0
         DatagramPacket outData = new DatagramPacket(rawData, 0, sendAddress, sendPort);
         socket.send(outData);
 
         fileInputStream.close();
     }
 
+    // closes the socket
     @Override
     public void close() {
         this.socket.close();
     }
 
+    // sets up the port and address of the destination
     public void connect(InetAddress address, int port) {
         this.sendAddress = address;
         this.sendPort = port;
