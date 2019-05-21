@@ -21,7 +21,7 @@ public class TCPClientHandler extends ClientHandler {
         }
     }
 
-    // every read or send functions "blank" to transmissionHandler TODO find word
+    // every read or send functions dispatch to transmissionHandler
 
     @Override
     protected String readMessage() throws IOException {

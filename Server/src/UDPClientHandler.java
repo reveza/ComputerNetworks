@@ -27,7 +27,7 @@ public class UDPClientHandler extends ClientHandler {
         return message;
     }
 
-    // send functions "blank" to transmissionHandler TODO find word
+    // send functions dispatch to transmissionHandler
 
     @Override
     protected void sendMessage(String message) throws IOException {
