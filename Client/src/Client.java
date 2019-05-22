@@ -2,9 +2,7 @@ import java.net.*;
 import java.io.*;
 import java.util.Scanner;
 import java.net.InetAddress;
-public class Client {//TODO make eclipse project with src files
-    //TODO rapport de lab
-    //TODO tell user if file does not exist
+public class Client {
 
     private static TransmissionsHandler transmissionsHandler;
     private final static String BACK_COMMAND = "back";
